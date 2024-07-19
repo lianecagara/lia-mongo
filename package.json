@@ -1,6 +1,6 @@
 {
   "name": "lia-mongo",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "A simplified MongoDB key-value store for casual developers.",
   "main": "./index.js",
   "type": "commonjs",

@@ -21,11 +21,13 @@ The primary advantage of LiaMongo is its ease of use. By providing a straightfor
 While the key-value schema provides simplicity and flexibility, it may not be suitable for all use cases, especially those requiring complex querying or relationships between data. Additionally, the lack of schema validation for the value field may lead to inconsistencies in data storage.
 
 ## Installation
+
 ```bash
 npm install lia-mongo
 ```
 
-## How to import
+## How to Import
+
 ```js
 const LiaMongo = require('lia-mongo');
 ```
@@ -46,6 +48,7 @@ Creates a new instance of LiaMongo.
   - `isOwnHost`: (Optional) Boolean indicating whether the MongoDB instance is hosted on the same machine. Default is `false`.
   - `ignoreError`: (Optional) Boolean indicating whether to ignore connection errors. Default is `false`.
   - `allowClear`: (Optional) Boolean indicating whether clearing the collection is allowed. Default is `false`.
+  - `createConnection`: (Optional) Boolean indicating whether to create a new connection. Default is `false`.
 
 #### Returns
 
@@ -61,11 +64,15 @@ const liaMongo = new LiaMongo({
 });
 ```
 
-### start()
+### start(ignoreReconnect)
 
 #### Description
 
 Connects to the MongoDB database.
+
+#### Arguments
+
+- `ignoreReconnect`: (Optional) Boolean to ignore reconnection errors if already connected.
 
 #### Returns
 
@@ -254,7 +261,7 @@ Promise<object>: An object containing all key-value pairs.
 const data = await liaMongo.load();
 ```
 
-### preProc()
+### preProc(data)
 
 #### Description
 
@@ -290,6 +297,125 @@ Promise<object>: An object containing all key-value pairs.
 const objectData = await liaMongo.toObject();
 ```
 
+### toJSON()
+
+#### Description
+
+Converts all key-value pairs in the MongoDB collection into a JSON object.
+
+#### Returns
+
+Promise<object>: A JSON object containing all key-value pairs.
+
+#### Usage
+
+```javascript
+const jsonData = await liaMongo.toJSON();
+```
+
+### [Symbol.iterator]()
+
+#### Description
+
+Returns an iterator for the key-value pairs in the MongoDB collection.
+
+#### Returns
+
+AsyncIterator<{ key: string, value: any }>.
+
+#### Usage
+
+```javascript
+for await (const entry of liaMongo) {
+  console.log(entry);
+}
+```
+
+### iKeys()
+
+#### Description
+
+Returns an iterator for the keys in the MongoDB collection.
+
+#### Returns
+
+AsyncIterator<string>.
+
+#### Usage
+
+```javascript
+for await (const key of liaMongo.iKeys()) {
+  console.log(key);
+}
+```
+
+### iValues()
+
+#### Description
+
+Returns an iterator for the values in the MongoDB collection.
+
+#### Returns
+
+AsyncIterator<any>.
+
+#### Usage
+
+```javascript
+for await (const value of liaMongo.iValues()) {
+  console.log(value);
+}
+```
+
+### bulkPut(pairs)
+
+#### Description
+
+Inserts or updates multiple key-value pairs in the MongoDB collection in a single operation.
+
+#### Arguments
+
+- `pairs`: An object where keys are the keys to insert/update and values are the corresponding values.
+
+#### Returns
+
+Promise<void>.
+
+#### Usage
+
+```javascript
+await liaMongo.bulkPut({
+  key1: "value1",
+  key2: "value2",
+});
+```
+
+### bulkGet(...keys)
+
+#### Description
+
+Retrieves values for multiple keys in a single operation. This method accepts individual keys or an array of keys.
+
+#### Arguments
+
+- `...keys`: One or more keys or an array of keys to retrieve values for.
+
+#### Returns
+
+Promise<any[]>: An array of values corresponding to the given keys. Returns an empty array if no values are found or if an error occurs and `ignoreError` is set to `true`.
+
+#### Usage
+
+```javascript
+const values = await liaMongo.bulkGet("key1", "key2");
+```
+
+Or
+
+```javascript
+const values = await liaMongo.bulkGet(["key1", "key2"]);
+```
+
 ### Static Schema
 
 #### Description
@@ -305,3 +431,5 @@ LiaMongo.schema;
 ## Credits
 
 LiaMongo npm package created by Liane Cagara.
+
+---
